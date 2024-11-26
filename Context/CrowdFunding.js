@@ -39,11 +39,11 @@ export const CrowdFundingProvider = ({ children }) => {
   };
 
   const getCampaigns = async () => {
-    const provider = new ethers.providers.JsonRpcProvider();
-    const contract = fetchContract(provider);
-
     try {
+      console.log("Fetching campaigns...");
       const campaigns = await contract.getCampaigns();
+      console.log("Raw campaigns data:", campaigns);
+
       const parsedCampaigns = campaigns.map((campaign, i) => ({
         owner: campaign.owner,
         title: campaign.title,
@@ -56,6 +56,7 @@ export const CrowdFundingProvider = ({ children }) => {
         pId: i,
       }));
 
+      console.log("Parsed campaigns data:", parsedCampaigns);
       setCampaigns(parsedCampaigns);
     } catch (error) {
       console.error("Error fetching campaigns:", error);
@@ -157,11 +158,13 @@ export const CrowdFundingProvider = ({ children }) => {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
+      console.log("Connected account:", accounts[0]);
       setCurrentAccount(accounts[0]);
     } catch (error) {
       console.error("Error connecting to wallet:", error);
     }
   };
+
 
   useEffect(() => {
     checkIfWalletConnected();

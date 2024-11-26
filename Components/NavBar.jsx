@@ -15,7 +15,7 @@ const NavBar = () => {
             <a href="/" className="inline-flex items-center mr-8">
               <Logo color="text-white" />
               <span className="ml-2 text-xl font-bold tracking-wide text-gray-100 uppercase">
-                Company
+                Sahayog
               </span>
             </a>
             <ul className="flex items-center hidden space-x-8 lg:flex">
