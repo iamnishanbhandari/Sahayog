@@ -125,12 +125,13 @@ const Hero = ({ titleData, createCampaign }) => {
                       Target Amount
                     </label>
                     <input
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        console.log(e.target.value);
                         setCampaign({
                           ...campaign,
-                          title: e.target.value,
-                        })
-                      }
+                          deadline: e.target.value,
+                        });
+                      }}
                       placeholder="date"
                       required
                       type="date"

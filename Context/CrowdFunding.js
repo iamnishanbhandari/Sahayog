@@ -13,31 +13,38 @@ export const CrowdFundingProvider = ({ children }) => {
   const titleData = "Crowd Funding Contract";
   const [currentAccount, setCurrentAccount] = useState("");
   const [campaigns, setCampaigns] = useState([]);
-
   const createCampaign = async (campaign) => {
-    const { title, description, amount, deadline } = campaign;
-    const web3modal = new Web3Modal();
-    const connection = await web3modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-    const contract = fetchContract(signer);
-
     try {
+      const { title, description, amount, deadline } = campaign;
+
+      // First convert amount to Wei
+      const amountInWei = ethers.utils.parseUnits(amount);
+
+      // Connect to contract
+      const web3modal = new Web3Modal();
+      const connection = await web3modal.connect();
+      const provider = new ethers.providers.Web3Provider(connection);
+      const signer = provider.getSigner();
+      const contract = fetchContract(signer);
+
+      // Create campaign with explicit BigNumber
+      console.log({ amountInWei });
+      console.log({ deadline });
       const transaction = await contract.createCampaign(
         currentAccount,
-        title,
-        description,
-        ethers.utils.parseUnits(amount, "ether"),
+        title ?? "test",
+        description ?? "test",
+        amountInWei, // Using amountInWei directly
         Math.floor(new Date(deadline).getTime() / 1000)
       );
 
       await transaction.wait();
-      console.log("Campaign created successfully", transaction);
+      console.log("Contract call success", transaction);
     } catch (error) {
-      console.error("Error creating campaign:", error);
+      console.log("Error in createCampaign:", error);
+      throw error;
     }
   };
-
   const getCampaigns = async () => {
     try {
       console.log("Fetching campaigns...");
@@ -164,7 +171,6 @@ export const CrowdFundingProvider = ({ children }) => {
       console.error("Error connecting to wallet:", error);
     }
   };
-
 
   useEffect(() => {
     checkIfWalletConnected();

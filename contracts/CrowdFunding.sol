@@ -2,6 +2,8 @@
 pragma solidity ^0.8.9;
 
 contract CrowdFunding {
+    event Log(uint256 target, string message);
+
     struct Campaign {
         address owner;
         string title;
@@ -16,13 +18,21 @@ contract CrowdFunding {
     mapping(uint256 => Campaign) public campaigns;
     uint256 public numberOfCampaigns = 0;
 
-    function createCampaign(address _owner, string memory _title, string memory _description, uint256 _target, uint256 _deadline) 
-        public 
-        returns (uint256) 
-    {
+    function createCampaign(
+        address _owner,
+        string memory _title,
+        string memory _description,
+        uint256 _target,
+        uint256 _deadline
+    ) public returns (uint256) {
         Campaign storage campaign = campaigns[numberOfCampaigns];
-        
-        require(_deadline > block.timestamp, "The deadline should be a date in the future");
+
+        require(
+            _deadline > block.timestamp,
+            "The deadline should be a date in the future"
+        );
+
+        emit Log(_target, "target");
 
         campaign.owner = _owner;
         campaign.title = _title;
@@ -44,13 +54,15 @@ contract CrowdFunding {
         campaign.donations.push(amount);
 
         (bool sent, ) = payable(campaign.owner).call{value: amount}("");
-        
+
         if (sent) {
             campaign.amountCollected += amount;
         }
     }
 
-    function getDonators(uint256 _id) public view returns (address[] memory, uint256[] memory) {
+    function getDonators(
+        uint256 _id
+    ) public view returns (address[] memory, uint256[] memory) {
         return (campaigns[_id].donators, campaigns[_id].donations);
     }
 
